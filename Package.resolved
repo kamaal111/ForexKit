@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "mockurlprotocol",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kamaal111/MockURLProtocol.git",
+      "state" : {
+        "revision" : "3071ffea2d277196be6587173b4364079fe4d8a9",
+        "version" : "0.1.1"
+      }
+    },
+    {
+      "identity" : "shrimpextensions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Kamaalio/ShrimpExtensions.git",
+      "state" : {
+        "revision" : "d3440db5ad0d814278d7b9e86496b94f816ee112",
+        "version" : "3.1.0"
+      }
+    },
+    {
+      "identity" : "xiphiasnet",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kamaal111/XiphiasNet.git",
+      "state" : {
+        "revision" : "b8c2bd983f6c6df1338fdebc1d5b4740119b745b",
+        "version" : "7.0.0"
+      }
+    }
+  ],
+  "version" : 2
+}
