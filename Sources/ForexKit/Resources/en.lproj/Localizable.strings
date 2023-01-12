@@ -1,0 +1,12 @@
+/*
+  Localizable.strings
+  ForexKit
+
+  Created by Kamaal Farah on 12/01/2023.
+  Copyright © 2023 Kamaal. All rights reserved.
+*/
+
+"Euro" = "Euro";
+"US Dollar" = "US Dollar";
+"Canadian Dollar" = "Canadian Dollar";
+"Turkish Lira" = "Turkish Lira"

@@ -14,6 +14,19 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
     case CAD
     case TRY
 
+    public var localized: String {
+        switch self {
+        case .EUR:
+            return NSLocalizedString("Euro", comment: "")
+        case .USD:
+            return NSLocalizedString("US Dollar", comment: "")
+        case .CAD:
+            return NSLocalizedString("Canadian Dollar", comment: "")
+        case .TRY:
+            return NSLocalizedString("Turkish Lira", comment: "")
+        }
+    }
+
     public var symbol: String {
         switch self {
         case .EUR:

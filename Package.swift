@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "ForexKit",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v13),
         .macOS(.v10_15),
@@ -25,7 +26,8 @@ let package = Package(
             dependencies: [
                 "XiphiasNet",
                 "ShrimpExtensions",
-            ]),
+            ],
+            resources: [.process("Resources")]),
         .testTarget(
             name: "ForexKitTests",
             dependencies: [
