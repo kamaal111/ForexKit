@@ -19,9 +19,22 @@ final class ForexKitTests: XCTestCase {
 
     // - MARK: Convert
 
-    func testConvert() throws {
-        makeResponse(with: successResponse, status: 200)
+    func testReverseConvert() throws {
+        let rates = try JSONDecoder().decode(ExchangeRates.self, from: successResponse.data(using: .utf8)!)
 
+        let cases: [((amount: Double, currency: Currencies), Currencies, (amount: Double, currency: Currencies))] = [
+            ((420, .USD), .EUR, (393.7746109131821, .EUR))
+        ]
+
+        for (input, preferedCurrency, expectedResult) in cases {
+            let maybeResult = ForexKit().convert(from: input, to: preferedCurrency, withRatesFrom: rates, reverse: true)
+            let result = try XCTUnwrap(maybeResult)
+            XCTAssertEqual(result.amount, expectedResult.amount)
+            XCTAssertEqual(result.currency, expectedResult.currency)
+        }
+    }
+
+    func testConvert() throws {
         let rates = try JSONDecoder().decode(ExchangeRates.self, from: successResponse.data(using: .utf8)!)
 
         let cases: [((amount: Double, currency: Currencies), Currencies, (amount: Double, currency: Currencies))] = [

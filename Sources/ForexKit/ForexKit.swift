@@ -21,7 +21,8 @@ public struct ForexKit {
     public func convert(
         from input: (amount: Double, currency: Currencies),
         to base: Currencies,
-        withRatesFrom exchangeRates: ExchangeRates) -> (amount: Double, currency: Currencies)? {
+        withRatesFrom exchangeRates: ExchangeRates,
+        reverse: Bool = false) -> (amount: Double, currency: Currencies)? {
             if input.currency == base {
                 return input
             }
@@ -34,7 +35,13 @@ public struct ForexKit {
                 return nil
             }
 
-            return (input.amount * rate, base)
+            var amount = input.amount
+            if reverse {
+                amount /= rate
+            } else {
+                amount *= rate
+            }
+            return (amount, base)
         }
 
     public func getLatest(base: Currencies, symbols: [Currencies]) async -> Result<ExchangeRates?, Errors> {
