@@ -8,10 +8,11 @@
 import Foundation
 import ShrimpExtensions
 
-public enum Currencies: String, CaseIterable, Codable, Identifiable {
+public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
     case EUR
     case USD
     case CAD
+    case TRY
 
     public var symbol: String {
         switch self {
@@ -21,6 +22,8 @@ public enum Currencies: String, CaseIterable, Codable, Identifiable {
             return "US$"
         case .CAD:
             return "CA$"
+        case .TRY:
+            return "₺"
         }
     }
 
@@ -32,6 +35,8 @@ public enum Currencies: String, CaseIterable, Codable, Identifiable {
             return UUID(uuidString: "ce009f7f-56b2-4dcf-9166-9b0040f12374")!
         case .CAD:
             return UUID(uuidString: "159a21a1-ac56-4ce5-9022-ea5e6bc0ab16")!
+        case .TRY:
+            return UUID(uuidString: "6ff2d600-f365-413c-b619-a006277a8f41")!
         }
     }
 
