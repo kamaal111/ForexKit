@@ -12,15 +12,18 @@ public class ForexKitConfiguration {
     let preview: Bool
     let urlSession: URLSession
     var container: CacheContainerable
+    let ratePointPrecision: Int
 
     public init(
         preview: Bool = false,
         skipCaching: Bool = false,
         urlSession: URLSession = .shared,
-        container: CacheContainerable? = nil) {
+        container: CacheContainerable? = nil,
+        ratePointPrecision: Int = 4) {
             self.skipCaching = skipCaching
             self.preview = preview
             self.urlSession = urlSession
+            self.ratePointPrecision = ratePointPrecision
             if let container {
                 self.container = container
             } else {
