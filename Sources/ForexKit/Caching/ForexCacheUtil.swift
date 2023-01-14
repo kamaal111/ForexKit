@@ -153,7 +153,7 @@ class ForexCacheUtil {
                 guard let symbol = symbols.first(where: { $0 == exchangeRateBase }),
                       let rate = ratesMappedByCurrency[base] else { return result }
 
-                result[symbol] = Double((1 / rate).toFixed(4))
+                result[symbol] = Double((1 / rate).toFixed(configuration.ratePointPrecision))
                 return result
             })
         }
