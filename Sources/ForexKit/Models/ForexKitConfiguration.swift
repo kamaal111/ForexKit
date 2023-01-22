@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ShrimpExtensions
 
 public class ForexKitConfiguration {
     let skipCaching: Bool
@@ -13,7 +14,8 @@ public class ForexKitConfiguration {
     let urlSession: URLSession
     var container: CacheContainerable
     let ratePointPrecision: Int
-    let baseURL: URL
+    let forexBaseURL: URL
+    let btcBaseURL: URL
 
     public init(
         preview: Bool = false,
@@ -21,12 +23,14 @@ public class ForexKitConfiguration {
         urlSession: URLSession = .shared,
         container: CacheContainerable? = nil,
         ratePointPrecision: Int = 4,
-        baseURL: URL = URL(staticString: "https://theforexapi.com/api")) {
+        forexBaseURL: URL = URL(staticString: "https://theforexapi.com/api"),
+        btcBaseURL: URL = URL(staticString: "https://api.coindesk.com/v1/bpi")) {
             self.skipCaching = skipCaching
             self.preview = preview
             self.urlSession = urlSession
             self.ratePointPrecision = ratePointPrecision
-            self.baseURL = baseURL
+            self.forexBaseURL = forexBaseURL
+            self.btcBaseURL = btcBaseURL
             if let container {
                 self.container = container
             } else {
