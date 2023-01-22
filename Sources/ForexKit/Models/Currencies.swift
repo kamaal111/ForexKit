@@ -39,6 +39,16 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
     case SGD
     case THB
     case ZAR
+    case BTC
+
+    public var isCryptoCurrency: Bool {
+        switch self {
+        case .BTC:
+            return true
+        default:
+            return false
+        }
+    }
 
     public var localized: String {
         switch self {
@@ -102,6 +112,8 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
             return NSLocalizedString("Thai Baht", comment: "")
         case .ZAR:
             return NSLocalizedString("South African Rand", comment: "")
+        case .BTC:
+            return NSLocalizedString("Bitcoin", comment: "")
         }
     }
 
@@ -145,6 +157,8 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
             return "฿"
         case .ZAR:
             return "R"
+        case .BTC:
+            return "₿"
         }
     }
 
@@ -241,6 +255,8 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
             return UUID(uuidString: "a72fe535-fb99-4587-b814-2b8d7d49bd31")!
         case .ZAR:
             return UUID(uuidString: "bd449bcc-53b2-458b-9562-51bcd44f11b2")!
+        case .BTC:
+            return UUID(uuidString: "d2f5fb21-41fa-4128-8be5-7088a6e18504")!
         }
     }
 }

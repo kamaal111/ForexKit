@@ -20,7 +20,7 @@ final class ForexKitTests: XCTestCase {
     // - MARK: Convert
 
     func testReverseConvert() throws {
-        let rates = try JSONDecoder().decode(ExchangeRates.self, from: successResponse.data(using: .utf8)!)
+        let rates = try JSONDecoder().decode(ExchangeRates.self, from: successForexResponse.data(using: .utf8)!)
 
         let cases: [((amount: Double, currency: Currencies), Currencies, (amount: Double, currency: Currencies))] = [
             ((420, .USD), .EUR, (393.7746109131821, .EUR))
@@ -35,7 +35,7 @@ final class ForexKitTests: XCTestCase {
     }
 
     func testConvert() throws {
-        let rates = try JSONDecoder().decode(ExchangeRates.self, from: successResponse.data(using: .utf8)!)
+        let rates = try JSONDecoder().decode(ExchangeRates.self, from: successForexResponse.data(using: .utf8)!)
 
         let cases: [((amount: Double, currency: Currencies), Currencies, (amount: Double, currency: Currencies))] = [
             ((420, .EUR), .EUR, (420, .EUR)),
@@ -152,7 +152,7 @@ final class ForexKitTests: XCTestCase {
     // - MARK: Get latest
 
     func testGetLatestWithoutCache() async throws {
-        makeResponse(with: successResponse, status: 200)
+        makeResponses(with: [ResponseBody(host: .forex, body: successForexResponse)], status: 200)
         let container = TestCacheContainer(exchangeRates: nil)
         let configuration = ForexKitConfiguration(
             preview: false,
@@ -178,7 +178,7 @@ final class ForexKitTests: XCTestCase {
     "message": "Oh nooo!"
 }
 """
-        makeResponse(with: message, status: 400)
+        makeResponses(with: [ResponseBody(host: .forex, body: message)], status: 400)
         let container = TestCacheContainer(exchangeRates: nil)
         let configuration = ForexKitConfiguration(
             preview: false,
@@ -208,8 +208,8 @@ final class ForexKitTests: XCTestCase {
         XCTAssertNil(container.exchangeRates)
     }
 
-    func makeResponse(with responseBody: String, status: Int) {
-        MockURLProtocol.requestHandler = { _ in
+    func makeResponses(with responseBodies: [ResponseBody], status: Int) {
+        MockURLProtocol.requestHandler = { request in
             let response = HTTPURLResponse(
                 url: URL(string: "https://kamaal.io")!,
                 statusCode: status,
@@ -217,13 +217,50 @@ final class ForexKitTests: XCTestCase {
                 headerFields: nil
             )!
 
-            let data = responseBody.data(using: .utf8)
+            let data = responseBodies
+                .first(where: { $0.host.rawValue == request.url?.host })?
+                .body
+                .data(using: .utf8)
             return (response, data)
+        }
+    }
+
+    struct ResponseBody {
+        let host: Hosts
+        let body: String
+
+        enum Hosts: String {
+            case forex = "theforexapi.com"
         }
     }
 }
 
-private let successResponse = """
+private let successBTCResponse = """
+{
+    "bpi": {
+        "BTC": {
+            "code": "BTC",
+            "description": "Bitcoin",
+            "rate": "1.0000",
+            "rate_float": 1
+        },
+        "USD": {
+            "code": "USD",
+            "description": "United States Dollar",
+            "rate": "22,791.0824",
+            "rate_float": 22791.0824
+        }
+    },
+    "disclaimer": "This data was produced from the CoinDesk Bitcoin Price Index (USD). Non-USD currency data converted using hourly conversion rate from openexchangerates.org",
+    "time": {
+        "updated": "Jan 22, 2023 16:02:00 UTC",
+        "updatedISO": "2023-01-22T16:02:00+00:00",
+        "updateduk": "Jan 22, 2023 at 16:02 GMT"
+    }
+}
+"""
+
+private let successForexResponse = """
 {
     "base": "EUR",
     "date": "2022-12-30",
