@@ -9,8 +9,6 @@ import XiphiasNet
 import Foundation
 import ShrimpExtensions
 
-private let BASE_URL = URL(staticString: "https://theforexapi.com/api")
-
 class ForexAPI {
     private let networker: XiphiasNet
     private let configuration: ForexKitConfiguration
@@ -23,7 +21,7 @@ class ForexAPI {
     func latest(base: Currencies, symbols: [Currencies]) async -> Result<ExchangeRates, Errors> {
         guard !configuration.preview else { return .success(.preview) }
 
-        let url = BASE_URL
+        let url = configuration.baseURL
             .appendingPathComponent("latest")
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         var queryItems = [
