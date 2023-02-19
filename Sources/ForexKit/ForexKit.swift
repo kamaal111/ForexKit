@@ -31,17 +31,22 @@ public struct ForexKit {
                 return (0, base)
             }
 
-            guard let rate = exchangeRates.ratesMappedByCurrency[input.currency] else {
-                return nil
+            if reverse {
+                let rate = exchangeRates.ratesMappedByCurrency[input.currency]
+                if rate == nil {
+                    guard let rate = exchangeRates.ratesMappedByCurrency[base] else { return nil }
+
+                    return (input.amount / rate, base)
+                }
+
+                guard let rate else { return nil }
+
+                return (input.amount / (1 / rate), base)
             }
 
-            var amount = input.amount
-            if reverse {
-                amount /= rate
-            } else {
-                amount *= rate
-            }
-            return (amount, base)
+            guard let rate = exchangeRates.ratesMappedByCurrency[input.currency] else { return nil }
+
+            return (input.amount * rate, base)
         }
 
     public func getLatest(base: Currencies, symbols: [Currencies]) async -> Result<ExchangeRates?, Errors> {

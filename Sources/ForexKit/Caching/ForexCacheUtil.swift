@@ -58,7 +58,11 @@ class ForexCacheUtil {
                     groupedExchangeRatesByBase[base] = completeExchangeRates
                     configuration.container.exchangeRates = [cacheKey: groupedExchangeRatesByBase.values.asArray()]
 
-                    return .success(completeExchangeRates)
+                    let completeExchangeRatesWithPointPrecisionApplied = ExchangeRates(
+                        base: completeExchangeRates.baseCurrency!,
+                        date: completeExchangeRates.date,
+                        rates: applyPointPrecisionToRates(completeExchangeRates.ratesMappedByCurrency))
+                    return .success(completeExchangeRatesWithPointPrecisionApplied)
                 } else {
                     var newRemainingSymbols: [Currencies] = []
                     for symbol in symbols where !foundCachedRatesSymbols.contains(symbol) {
@@ -99,7 +103,11 @@ class ForexCacheUtil {
             groupedExchangeRatesByBase[base] = completeExchangeRates
             configuration.container.exchangeRates = [cacheKey: groupedExchangeRatesByBase.values.asArray()]
 
-            return .success(completeExchangeRates)
+            let completeExchangeRatesWithPointPrecisionApplied = ExchangeRates(
+                base: completeExchangeRates.baseCurrency!,
+                date: completeExchangeRates.date,
+                rates: applyPointPrecisionToRates(completeExchangeRates.ratesMappedByCurrency))
+            return .success(completeExchangeRatesWithPointPrecisionApplied)
         }
 
     func getFallback(base: Currencies, symbols: [Currencies]) -> ExchangeRates? {
@@ -121,11 +129,19 @@ class ForexCacheUtil {
                 .keys
                 .sorted(by: \.rawValue, using: .orderedAscending)
             if sortedRatesSymbols == symbols {
-                return ExchangeRates(base: base, date: key, rates: rates)
+                return ExchangeRates(base: base, date: key, rates: applyPointPrecisionToRates(rates))
             }
         }
 
         return nil
+    }
+
+    private func applyPointPrecisionToRates(_ rates: [Currencies: Double]) -> [Currencies: Double] {
+        var newRates: [Currencies: Double] = [:]
+        for (currency, rate) in rates {
+            newRates[currency] = Double(rate.toFixed(configuration.ratePointPrecision))
+        }
+        return newRates
     }
 
     private func getCachedResultForLatest(
@@ -153,7 +169,7 @@ class ForexCacheUtil {
                 guard let symbol = symbols.first(where: { $0 == exchangeRateBase }),
                       let rate = ratesMappedByCurrency[base] else { return result }
 
-                result[symbol] = Double((1 / rate).toFixed(configuration.ratePointPrecision))
+                result[symbol] = 1 / rate
                 return result
             })
         }

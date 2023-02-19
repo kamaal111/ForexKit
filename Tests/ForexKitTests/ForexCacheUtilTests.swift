@@ -93,7 +93,7 @@ final class ForexCacheUtilTests: XCTestCase {
         ]]
         let expectedRates: [Currencies: Double] = [.EUR: 1.444, .USD: 0.7353]
         let container = TestCacheContainer(exchangeRates: initialCacheContainerData)
-        let cacheUtil = ForexCacheUtil(configuration: .init(container: container))
+        let cacheUtil = ForexCacheUtil(configuration: .init(container: container, ratePointPrecision: 4))
 
         let result = try await cacheUtil.cacheLatest(base: base, symbols: symbols, apiCall: { base, symbols in
             XCTFail("Should be unreachable")
@@ -102,14 +102,24 @@ final class ForexCacheUtilTests: XCTestCase {
 
         let unwrappedResult = try XCTUnwrap(result)
         let expectedResult = ExchangeRates(base: base, date: unwrappedResult.date, rates: expectedRates)
-        XCTAssertEqual(unwrappedResult, expectedResult)
+        XCTAssertEqual(unwrappedResult.base, expectedResult.base)
+        XCTAssertEqual(unwrappedResult.date, expectedResult.date)
+        XCTAssertEqual(unwrappedResult.rates.count, expectedResult.rates.count)
+        for (currency, amount) in unwrappedResult.ratesMappedByCurrency {
+            XCTAssertEqual(amount, expectedResult.ratesMappedByCurrency[currency])
+        }
 
         let cachedExchangeRates = try XCTUnwrap(container.exchangeRates)
         XCTAssertEqual(cachedExchangeRates.count, 1)
         let exchangeRates = try XCTUnwrap(cachedExchangeRates.first?.value)
         XCTAssertEqual(exchangeRates.count, initialCacheContainerData.first!.value.count + 1)
         let exchangeRate = try XCTUnwrap(exchangeRates.first(where: { $0.base == base.rawValue }))
-        XCTAssertEqual(exchangeRate, unwrappedResult)
+        XCTAssertEqual(exchangeRate.base, unwrappedResult.base)
+        XCTAssertEqual(exchangeRate.date, unwrappedResult.date)
+        XCTAssertEqual(exchangeRate.rates.count, unwrappedResult.rates.count)
+        for (currency, amount) in exchangeRate.ratesMappedByCurrency {
+            XCTAssertEqual(Double(amount.toFixed(4)), unwrappedResult.ratesMappedByCurrency[currency])
+        }
     }
 
     func testCacheLatestWithPartialCacheFound() async throws {
