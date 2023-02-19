@@ -33,6 +33,7 @@ let package = Package(
             dependencies: [
                 "ForexKit",
                 "MockURLProtocol",
+                "ShrimpExtensions"
             ]),
     ]
 )

@@ -8,6 +8,7 @@
 
 import XCTest
 import MockURLProtocol
+import ShrimpExtensions
 @testable import ForexKit
 
 final class ForexKitTests: XCTestCase {
@@ -23,13 +24,13 @@ final class ForexKitTests: XCTestCase {
         let rates = try JSONDecoder().decode(ExchangeRates.self, from: successForexResponse.data(using: .utf8)!)
 
         let cases: [((amount: Double, currency: Currencies), Currencies, (amount: Double, currency: Currencies))] = [
-            ((420, .USD), .EUR, (393.7746109131821, .EUR))
+            ((420, .USD), .EUR, (393.7746, .EUR))
         ]
 
         for (input, preferedCurrency, expectedResult) in cases {
             let maybeResult = ForexKit().convert(from: input, to: preferedCurrency, withRatesFrom: rates, reverse: true)
             let result = try XCTUnwrap(maybeResult)
-            XCTAssertEqual(result.amount, expectedResult.amount)
+            XCTAssertEqual(Double(result.amount.toFixed(4)), expectedResult.amount)
             XCTAssertEqual(result.currency, expectedResult.currency)
         }
     }
@@ -41,6 +42,21 @@ final class ForexKitTests: XCTestCase {
             ((420, .EUR), .EUR, (420, .EUR)),
             ((69, .USD), .EUR, (73.5954, .EUR)),
             ((0, .EUR), .CAD, (0, .CAD)),
+        ]
+
+        for (input, preferedCurrency, expectedResult) in cases {
+            let maybeResult = ForexKit().convert(from: input, to: preferedCurrency, withRatesFrom: rates)
+            let result = try XCTUnwrap(maybeResult)
+            XCTAssertEqual(result.amount, expectedResult.amount)
+            XCTAssertEqual(result.currency, expectedResult.currency)
+        }
+    }
+
+    func testConvertWithBitcoinBase() throws {
+        let rates = ExchangeRates(base: .BTC, date: Date(), rates: [.EUR: 0.00004363121673937809])
+
+        let cases: [((amount: Double, currency: Currencies), Currencies, (amount: Double, currency: Currencies))] = [
+            ((22_919.37, .EUR), .BTC, (1, .BTC))
         ]
 
         for (input, preferedCurrency, expectedResult) in cases {
@@ -152,7 +168,10 @@ final class ForexKitTests: XCTestCase {
     // - MARK: Get latest
 
     func testGetLatestWithoutCache() async throws {
-        makeResponses(with: [ResponseBody(host: .forex, body: successForexResponse)], status: 200)
+        makeResponses(with: [
+            ResponseBody(host: .forex, body: successForexResponse),
+            ResponseBody(host: .bitcoin, body: successBTCResponse)
+        ], status: 200)
         let container = TestCacheContainer(exchangeRates: nil)
         let configuration = ForexKitConfiguration(
             preview: false,
@@ -161,7 +180,7 @@ final class ForexKitTests: XCTestCase {
             container: container)
         let forexKit = ForexKit(configuration: configuration)
 
-        let maybeResult = try await forexKit.getLatest(base: .EUR, symbols: [.CAD, .USD]).get()
+        let maybeResult = try await forexKit.getLatest(base: .EUR, symbols: [.CAD, .USD, .BTC]).get()
 
         let result = try XCTUnwrap(maybeResult)
         XCTAssertEqual(result.baseCurrency, .EUR)
@@ -170,6 +189,7 @@ final class ForexKitTests: XCTestCase {
         XCTAssertEqual(dateComponents.month, 12)
         XCTAssertEqual(dateComponents.year, 2022)
         XCTAssertNil(container.exchangeRates)
+        XCTAssertEqual(Double(result.ratesMappedByCurrency[.BTC]?.toFixed(4) ?? ""), 21367.9752)
     }
 
     func testGetLatestFailure() async throws {
@@ -218,9 +238,9 @@ final class ForexKitTests: XCTestCase {
             )!
 
             let data = responseBodies
-                .first(where: { $0.host.rawValue == request.url?.host })?
+                .first(where: { $0.host.rawValue == request.url!.host })!
                 .body
-                .data(using: .utf8)
+                .data(using: .utf8)!
             return (response, data)
         }
     }
@@ -231,6 +251,7 @@ final class ForexKitTests: XCTestCase {
 
         enum Hosts: String {
             case forex = "theforexapi.com"
+            case bitcoin = "api.coindesk.com"
         }
     }
 }
@@ -238,12 +259,6 @@ final class ForexKitTests: XCTestCase {
 private let successBTCResponse = """
 {
     "bpi": {
-        "BTC": {
-            "code": "BTC",
-            "description": "Bitcoin",
-            "rate": "1.0000",
-            "rate_float": 1
-        },
         "USD": {
             "code": "USD",
             "description": "United States Dollar",
