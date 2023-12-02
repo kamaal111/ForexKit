@@ -25,6 +25,7 @@ let package = Package(
             dependencies: [
                 .product(name: "KamaalNetworker", package: "KamaalSwift"),
                 .product(name: "KamaalExtensions", package: "KamaalSwift"),
+                .product(name: "KamaalUI", package: "KamaalSwift"),
             ],
             resources: [.process("Resources")]),
         .testTarget(
