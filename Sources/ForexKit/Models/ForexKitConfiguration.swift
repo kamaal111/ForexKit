@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import ShrimpExtensions
+import KamaalExtensions
 
 public class ForexKitConfiguration {
     let skipCaching: Bool

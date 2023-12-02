@@ -7,8 +7,8 @@ let package = Package(
     name: "ForexKit",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v13),
-        .macOS(.v10_15),
+        .iOS(.v15),
+        .macOS(.v12),
     ],
     products: [
         .library(
@@ -16,16 +16,15 @@ let package = Package(
             targets: ["ForexKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/kamaal111/XiphiasNet.git", "7.0.0" ..< "8.0.0"),
-        .package(url: "https://github.com/Kamaalio/ShrimpExtensions.git", "3.1.0" ..< "4.0.0"),
+        .package(url: "https://github.com/Kamaalio/KamaalSwift.git", .upToNextMajor(from: "1.4.1")),
         .package(url: "https://github.com/kamaal111/MockURLProtocol.git", "0.1.1" ..< "0.2.0"),
     ],
     targets: [
         .target(
             name: "ForexKit",
             dependencies: [
-                "XiphiasNet",
-                "ShrimpExtensions",
+                .product(name: "KamaalNetworker", package: "KamaalSwift"),
+                .product(name: "KamaalExtensions", package: "KamaalSwift"),
             ],
             resources: [.process("Resources")]),
         .testTarget(

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import ShrimpExtensions
+import KamaalExtensions
 
 public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
     case EUR

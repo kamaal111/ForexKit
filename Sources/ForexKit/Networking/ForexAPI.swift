@@ -5,8 +5,8 @@
 //  Created by Kamaal M Farah on 08/01/2023.
 //
 
-import XiphiasNet
 import Foundation
+import KamaalNetworker
 
 class ForexAPI: APIClient {
     func latest(base: Currencies, symbols: [Currencies]) async -> Result<ExchangeRates, Errors> {
@@ -15,7 +15,7 @@ class ForexAPI: APIClient {
         let symbols = symbols.filter({ $0 != base })
         let forexURL = makeForexURL(base: base, symbols: symbols)
         async let forexResponse: Result<ExchangeRates, Errors> = networker.request(from: forexURL)
-            .mapError({ .fromXiphiasNet($0) })
+            .mapError({ .fromKamaalNetworker($0) })
             .map(\.data)
 
         if base == .BTC || (symbols.contains(.BTC) || symbols.isEmpty) {
@@ -72,7 +72,7 @@ class ForexAPI: APIClient {
 
     private func getBTCUSDRate() async -> Result<Double, Errors> {
         let btcResponseResult: Result<BTCCounterPrice, Errors> = await networker.request(from: btcURL)
-            .mapError({ .fromXiphiasNet($0) })
+            .mapError({ .fromKamaalNetworker($0) })
             .map(\.data)
         let btcResponse: BTCCounterPrice
         switch btcResponseResult {

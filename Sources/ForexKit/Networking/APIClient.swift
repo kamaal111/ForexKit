@@ -6,14 +6,14 @@
 //
 
 import Foundation
-import XiphiasNet
+import KamaalNetworker
 
 class APIClient {
-    let networker: XiphiasNet
+    let networker: KamaalNetworker
     let configuration: ForexKitConfiguration
 
     init(configuration: ForexKitConfiguration) {
-        self.networker = XiphiasNet(urlSession: configuration.urlSession)
+        self.networker = KamaalNetworker(urlSession: configuration.urlSession)
         self.configuration = configuration
     }
 
@@ -29,7 +29,7 @@ class APIClient {
             lhs.stringified == rhs.stringified
         }
 
-        static func fromXiphiasNet(_ error: XiphiasNet.Errors) -> Errors {
+        static func fromKamaalNetworker(_ error: KamaalNetworker.Errors) -> Errors {
             switch error {
             case .generalError:
                 return .generalError(context: error)
