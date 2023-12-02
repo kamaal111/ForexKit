@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import ShrimpExtensions
+import KamaalExtensions
 
 class ForexCacheUtil {
     let configuration: ForexKitConfiguration
