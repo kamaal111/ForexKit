@@ -8,6 +8,7 @@
 import Foundation
 import KamaalExtensions
 
+/// Configuration class for ``ForexKit/ForexKit``.
 public class ForexKitConfiguration {
     let skipCaching: Bool
     let preview: Bool
@@ -17,6 +18,15 @@ public class ForexKitConfiguration {
     let forexBaseURL: URL
     let btcBaseURL: URL
 
+    /// Initializer for ``ForexKitConfiguration``.
+    /// - Parameters:
+    ///   - preview: Whether to use preview (fake) data or not.
+    ///   - skipCaching: Whether to skip caching or not.
+    ///   - urlSession: `URLSession` object for ``ForexKit/ForexKit``.
+    ///   - container: Caching container.
+    ///   - ratePointPrecision: Point precision for ``ExchangeRates``.
+    ///   - forexBaseURL: `URL` to fetch forex exchange rates.
+    ///   - btcBaseURL: `URL` to fetch Bitcoin rates.
     public init(
         preview: Bool = false,
         skipCaching: Bool = false,
