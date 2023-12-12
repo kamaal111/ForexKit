@@ -8,6 +8,7 @@
 import SwiftUI
 import KamaalUI
 
+/// Picker and text field with bindable ``Currencies`` and `String` values.
 public struct MoneyField: View {
     @State private var valueIsValid = true
 
@@ -19,6 +20,14 @@ public struct MoneyField: View {
     let fixButtonTitle: String
     let fixMessage: String
 
+    /// Initialzer for ``MoneyField``.
+    /// - Parameters:
+    ///   - currency: Binded ``Currencies``.
+    ///   - value: Binded text value.
+    ///   - title: Field title.
+    ///   - currencies: The ``Currencies``s to pick.
+    ///   - fixButtonTitle: Title to show user when the value is invalid.
+    ///   - fixMessage: Message to show user when the value is invalid.
     public init(
         currency: Binding<Currencies>,
         value: Binding<String>,

@@ -8,39 +8,72 @@
 import Foundation
 import KamaalExtensions
 
+/// Enumeration that contains currencies.
 public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
+    /// Euro
     case EUR
+    /// US Dollar
     case USD
+    /// Canadian Dollar
     case CAD
+    /// Turkish Lira
     case TRY
+    /// Australian Dollar
     case AUD
+    ///  Bulgarian Lev
     case BGN
+    /// Brazilian Real
     case BRL
+    /// Swiss Franc
     case CHF
+    /// Chinese Yuan
     case CNY
+    /// Japanese Yen
     case JPY
+    /// Czech Koruna
     case CZK
+    /// Danish Krone
     case DKK
+    /// British Pound
     case GBP
+    /// Hong Kong Dollar
     case HKD
+    /// Hungarian Forint
     case HUF
+    /// Indonesian Rupiah
     case IDR
+    /// Indian Rupee
     case INR
+    /// Icelandic Krona
     case ISK
+    /// South Korean Won
     case KRW
+    /// Mexican Peso
     case MXN
+    /// Malaysian Ringgit
     case MYR
+    /// Norwegian Krone
     case NOK
+    /// New Zealand Dollar
     case NZD
+    /// Philippine Peso
     case PHP
+    /// Złoty
     case PLN
+    /// Romanian Leu
     case RON
+    /// Swedish Krona
     case SEK
+    /// Singapore Dollar
     case SGD
+    /// Thai Baht
     case THB
+    /// South African Rand
     case ZAR
+    /// Bitcoin
     case BTC
 
+    /// Whether ``Currencies`` is crypto currency or not.
     public var isCryptoCurrency: Bool {
         switch self {
         case .BTC:
@@ -50,6 +83,7 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Localized string for ``Currencies``.
     public var localized: String {
         switch self {
         case .EUR:
@@ -117,6 +151,7 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Symbol for ``Currencies``.
     public var symbol: String {
         switch self {
         case .EUR:
@@ -162,6 +197,7 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Symbol prefix for ``Currencies``.
     public var symbolPrefix: String {
         switch self {
         case .ISK:
@@ -193,6 +229,7 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Unique identifier for ``Currencies``.
     public var id: UUID {
         switch self {
         case .EUR:

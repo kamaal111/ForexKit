@@ -7,17 +7,31 @@
 
 import Foundation
 
+/// Exchange rates object.
 public struct ExchangeRates: Codable, Hashable {
+    /// Base currency.
     public let base: String
+    /// When the ``ExchangeRates`` has been updated.
     @DateValue<YearMonthDayStrategy> public var date: Date
+    /// Rates mapped by currency as key and rate as value.
     public var rates: [String: Double]
 
+    /// Initializer for ``ExchangeRates``.
+    /// - Parameters:
+    ///   - base: base currency.
+    ///   - date: When the ``ExchangeRates`` has been updated.
+    ///   - rates: Rates mapped by currency as key and rate as value.
     public init(base: String, date: Date, rates: [String: Double]) {
         self.base = base
         self.date = date
         self.rates = rates
     }
 
+    /// Initializer for ``ExchangeRates``.
+    /// - Parameters:
+    ///   - base: base currency.
+    ///   - date: When the ``ExchangeRates`` has been updated.
+    ///   - rates: Rates mapped by ``Currencies`` as key and rate as value.
     public init(base: Currencies, date: Date, rates: [Currencies: Double]) {
         let rates: [String: Double] = rates.reduce([:], {
             var result = $0
@@ -27,10 +41,12 @@ public struct ExchangeRates: Codable, Hashable {
         self.init(base: base.rawValue, date: date, rates: rates)
     }
 
+    /// Base ``Currencies``.
     public var baseCurrency: Currencies? {
         Currencies(rawValue: base)
     }
 
+    /// Rates mapped by ``Currencies`` as key and rate as value.
     public var ratesMappedByCurrency: [Currencies: Double] {
         rates
             .reduce([:], {
