@@ -135,7 +135,7 @@ public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
         case .PHP:
             return NSLocalizedString("Philippine Peso", comment: "")
         case .PLN:
-            return NSLocalizedString("Złoty", comment: "")
+            return NSLocalizedString("Polish Złoty", comment: "")
         case .RON:
             return NSLocalizedString("Romanian Leu", comment: "")
         case .SEK:
