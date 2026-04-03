@@ -8,7 +8,7 @@
 import Foundation
 
 /// Exchange rates object.
-public struct ExchangeRates: Codable, Hashable {
+public struct ExchangeRates: Codable, Hashable, Sendable {
     /// Base currency.
     public let base: String
     /// When the ``ExchangeRates`` has been updated.

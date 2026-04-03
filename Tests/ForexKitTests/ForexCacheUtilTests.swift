@@ -48,7 +48,8 @@ final class ForexCacheUtilTests: XCTestCase {
 
             XCTAssert(called)
             XCTAssertEqual(try result.get(), expectedResult)
-            let cachedExchangeRates = try XCTUnwrap(container.exchangeRates)
+            let containerRates = await container.exchangeRates
+            let cachedExchangeRates = try XCTUnwrap(containerRates)
             XCTAssertEqual(cachedExchangeRates.count, 1)
             let exchangeRates = try XCTUnwrap(cachedExchangeRates.first?.value)
             XCTAssertEqual(exchangeRates.count, 1)
@@ -75,7 +76,8 @@ final class ForexCacheUtilTests: XCTestCase {
             XCTAssertEqual(unwrappedResult.base, expectedResult.base)
             XCTAssertEqual(unwrappedResult.rates, expectedResult.rates)
 
-            let cachedExchangeRates = try XCTUnwrap(container.exchangeRates)
+            let containerRates = await container.exchangeRates
+            let cachedExchangeRates = try XCTUnwrap(containerRates)
             XCTAssertEqual(cachedExchangeRates.count, 1)
             let exchangeRates = try XCTUnwrap(cachedExchangeRates.first?.value)
             XCTAssertEqual(exchangeRates.count, 1)
@@ -104,7 +106,8 @@ final class ForexCacheUtilTests: XCTestCase {
         let expectedResult = ExchangeRates(base: base, date: unwrappedResult.date, rates: expectedRates)
         XCTAssertEqual(unwrappedResult, expectedResult)
 
-        let cachedExchangeRates = try XCTUnwrap(container.exchangeRates)
+        let containerRates = await container.exchangeRates
+        let cachedExchangeRates = try XCTUnwrap(containerRates)
         XCTAssertEqual(cachedExchangeRates.count, 1)
         let exchangeRates = try XCTUnwrap(cachedExchangeRates.first?.value)
         XCTAssertEqual(exchangeRates.count, initialCacheContainerData.first!.value.count + 1)
@@ -129,7 +132,8 @@ final class ForexCacheUtilTests: XCTestCase {
         XCTAssertEqual(unwrappedResult.base, expectedResult.base)
         XCTAssertEqual(unwrappedResult.rates, expectedResult.rates)
 
-        let cachedExchangeRates = try XCTUnwrap(container.exchangeRates)
+        let containerRates = await container.exchangeRates
+        let cachedExchangeRates = try XCTUnwrap(containerRates)
         XCTAssertEqual(cachedExchangeRates.count, 1)
         let exchangeRates = try XCTUnwrap(cachedExchangeRates.first?.value)
         XCTAssertEqual(exchangeRates.count, 1)

@@ -7,7 +7,7 @@
 
 
 import XCTest
-import MockURLProtocol
+@preconcurrency import MockURLProtocol
 @testable import ForexKit
 
 final class ForexKitTests: XCTestCase {
@@ -73,19 +73,20 @@ final class ForexKitTests: XCTestCase {
 
     // - MARK: Get fallback
 
-    func testGetFallbackFromCompleteEntryWithSameBase() throws {
+    func testGetFallbackFromCompleteEntryWithSameBase() async throws {
         let expectedResult = ExchangeRates(base: .CAD, date: Date(), rates: [.EUR: 420, .USD: 69])
         let initialCacheContainerData = [Date(): [expectedResult]]
         let container = TestCacheContainer(exchangeRates: initialCacheContainerData)
         let configuration = ForexKitConfiguration(container: container)
         let forexKit = ForexKit(configuration: configuration)
 
-        let result = try XCTUnwrap(forexKit.getFallback(base: .CAD, symbols: [.EUR, .USD]))
+        let fallback1 = await forexKit.getFallback(base: .CAD, symbols: [.EUR, .USD])
+        let result = try XCTUnwrap(fallback1)
         XCTAssertEqual(result.base, expectedResult.base)
         XCTAssertEqual(result.rates, expectedResult.rates)
     }
 
-    func testGetFallbackFromPartialyCompleteEntryWithSameBase() throws {
+    func testGetFallbackFromPartialyCompleteEntryWithSameBase() async throws {
         let initialCacheContainerData = [Date(): [
             ExchangeRates(base: .CAD, date: Date(), rates: [.EUR: 420]),
             ExchangeRates(base: .USD, date: Date(), rates: [.CAD: 2]),
@@ -94,12 +95,13 @@ final class ForexKitTests: XCTestCase {
         let configuration = ForexKitConfiguration(container: container)
         let forexKit = ForexKit(configuration: configuration)
 
-        let result = try XCTUnwrap(forexKit.getFallback(base: .CAD, symbols: [.EUR, .USD]))
+        let fallback2 = await forexKit.getFallback(base: .CAD, symbols: [.EUR, .USD])
+        let result = try XCTUnwrap(fallback2)
         XCTAssertEqual(result.baseCurrency, .CAD)
         XCTAssertEqual(result.ratesMappedByCurrency, [.EUR: 420, .USD: 0.5])
     }
 
-    func testGetFallbackFromNonBaseEntry() throws {
+    func testGetFallbackFromNonBaseEntry() async throws {
         let initialCacheContainerData = [Date(): [
             ExchangeRates(base: .EUR, date: Date(), rates: [.CAD: 0.5]),
             ExchangeRates(base: .USD, date: Date(), rates: [.CAD: 2]),
@@ -108,12 +110,13 @@ final class ForexKitTests: XCTestCase {
         let configuration = ForexKitConfiguration(container: container)
         let forexKit = ForexKit(configuration: configuration)
 
-        let result = try XCTUnwrap(forexKit.getFallback(base: .CAD, symbols: [.EUR, .USD]))
+        let fallback3 = await forexKit.getFallback(base: .CAD, symbols: [.EUR, .USD])
+        let result = try XCTUnwrap(fallback3)
         XCTAssertEqual(result.baseCurrency, .CAD)
         XCTAssertEqual(result.ratesMappedByCurrency, [.EUR: 2, .USD: 0.5])
     }
 
-    func testGetFallbackNotFound() throws {
+    func testGetFallbackNotFound() async throws {
         let initialCacheContainerData = [Date(): [
             ExchangeRates(base: .EUR, date: Date(), rates: [.USD: 0.5]),
         ]]
@@ -121,12 +124,12 @@ final class ForexKitTests: XCTestCase {
         let configuration = ForexKitConfiguration(container: container)
         let forexKit = ForexKit(configuration: configuration)
 
-        let result = forexKit.getFallback(base: .EUR, symbols: [.CAD])
+        let result = await forexKit.getFallback(base: .EUR, symbols: [.CAD])
 
         XCTAssertNil(result)
     }
 
-    func testGetFallbackWithInvalidSymbols() {
+    func testGetFallbackWithInvalidSymbols() async {
         let cases: [(Currencies, [Currencies])] = [
             (.CAD, []),
             (.CAD, [.CAD]),
@@ -137,16 +140,17 @@ final class ForexKitTests: XCTestCase {
         let configuration = ForexKitConfiguration(container: container)
         let forexKit = ForexKit(configuration: configuration)
         for (base, symbols) in cases {
-            let result = forexKit.getFallback(base: base, symbols: symbols)
+            let result = await forexKit.getFallback(base: base, symbols: symbols)
             XCTAssertNil(result)
         }
     }
 
-    func testGetFallbackWithNoCache() {
+    func testGetFallbackWithNoCache() async {
         let container = TestCacheContainer(exchangeRates: nil)
         let configuration = ForexKitConfiguration(container: container)
         let forexKit = ForexKit(configuration: configuration)
-        XCTAssertNil(forexKit.getFallback(base: .EUR, symbols: [.CAD]))
+        let result = await forexKit.getFallback(base: .EUR, symbols: [.CAD])
+        XCTAssertNil(result)
     }
 
     // - MARK: Get latest
@@ -169,7 +173,8 @@ final class ForexKitTests: XCTestCase {
         XCTAssertEqual(dateComponents.day, 30)
         XCTAssertEqual(dateComponents.month, 12)
         XCTAssertEqual(dateComponents.year, 2022)
-        XCTAssertNil(container.exchangeRates)
+        let cachedRates1 = await container.exchangeRates
+        XCTAssertNil(cachedRates1)
     }
 
     func testGetLatestFailure() async throws {
@@ -190,7 +195,8 @@ final class ForexKitTests: XCTestCase {
         let result = await forexKit.getLatest(base: .EUR, symbols: [.USD, .CAD])
 
         XCTAssertThrowsError(try result.get())
-        XCTAssertNil(container.exchangeRates)
+        let cachedRates2 = await container.exchangeRates
+        XCTAssertNil(cachedRates2)
     }
 
     func testGetLatestPreview() async throws {
@@ -205,7 +211,8 @@ final class ForexKitTests: XCTestCase {
         let result = try await forexKit.getLatest(base: .EUR, symbols: [.USD, .CAD]).get()
 
         XCTAssertEqual(result, .preview)
-        XCTAssertNil(container.exchangeRates)
+        let cachedRates3 = await container.exchangeRates
+        XCTAssertNil(cachedRates3)
     }
 
     func makeResponses(with responseBodies: [ResponseBody], status: Int) {

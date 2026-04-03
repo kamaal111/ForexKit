@@ -76,8 +76,8 @@ public struct ForexKit {
     ///   - base: ``Currencies``  to base the ``ExchangeRates`` on.
     ///   - symbols: The ``Currencies``s to get extchange rates for.
     /// - Returns: ``ExchangeRates`` on success or `nil` when no fallback can be found.
-    public func getFallback(base: Currencies, symbols: [Currencies]) ->  ExchangeRates? {
-        cacheUtil.getFallback(base: base, symbols: symbols)
+    public func getFallback(base: Currencies, symbols: [Currencies]) async -> ExchangeRates? {
+        await cacheUtil.getFallback(base: base, symbols: symbols)
     }
 }
 

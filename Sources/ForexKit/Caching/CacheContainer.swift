@@ -7,23 +7,23 @@
 
 import Foundation
 
-public protocol CacheContainerable {
-    var exchangeRates: [Date : [ExchangeRates]]? { get set }
+public protocol CacheContainerable: Sendable {
+    func getExchangeRates() async -> [Date : [ExchangeRates]]?
+    func setExchangeRates(_ newValue: [Date : [ExchangeRates]]?) async
 }
 
-class CacheContainer: CacheContainerable {
+final class CacheContainer: CacheContainerable {
     private let key = "io.kamaal.ForexKit.exchangeRates"
 
-    var exchangeRates: [Date : [ExchangeRates]]? {
-        get {
-            guard let data = UserDefaults.standard.object(forKey: key) as? Data else { return nil }
+    func getExchangeRates() async -> [Date : [ExchangeRates]]? {
+        guard let data = UserDefaults.standard.object(forKey: key) as? Data else { return nil }
 
-            return try? JSONDecoder().decode([Date : [ExchangeRates]].self, from: data)
-        }
-        set {
-            guard let data = try? JSONEncoder().encode(newValue) else { return }
+        return try? JSONDecoder().decode([Date : [ExchangeRates]].self, from: data)
+    }
 
-            UserDefaults.standard.set(data, forKey: key)
-        }
+    func setExchangeRates(_ newValue: [Date : [ExchangeRates]]?) async {
+        guard let data = try? JSONEncoder().encode(newValue) else { return }
+
+        UserDefaults.standard.set(data, forKey: key)
     }
 }
