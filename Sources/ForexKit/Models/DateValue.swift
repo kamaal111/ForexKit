@@ -8,7 +8,7 @@
 import Foundation
 
 @propertyWrapper
-public struct DateValue<Formatter: DateValueCodableStrategy> {
+public struct DateValue<Formatter: DateValueCodableStrategy>: Sendable {
     private let value: Formatter.RawValue
     public var wrappedValue: Date
 
@@ -69,7 +69,7 @@ extension YearMonthDayStrategy: DateValueCodableStrategy {
 }
 
 public protocol DateValueCodableStrategy {
-    associatedtype RawValue: Codable
+    associatedtype RawValue: Codable, Sendable
     static func decode(_ value: RawValue) throws -> Date
     static func encode(_ date: Date) -> RawValue
 }

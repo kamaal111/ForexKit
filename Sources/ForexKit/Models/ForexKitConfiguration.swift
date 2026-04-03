@@ -9,11 +9,11 @@ import Foundation
 import KamaalExtensions
 
 /// Configuration class for ``ForexKit/ForexKit``.
-public class ForexKitConfiguration {
+public final class ForexKitConfiguration: Sendable {
     let skipCaching: Bool
     let preview: Bool
     let urlSession: URLSession
-    var container: CacheContainerable
+    let container: CacheContainerable
     let ratePointPrecision: Int
     let forexBaseURL: URL
     let btcBaseURL: URL

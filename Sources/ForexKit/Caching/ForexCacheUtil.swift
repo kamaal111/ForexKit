@@ -8,7 +8,7 @@
 import Foundation
 import KamaalExtensions
 
-class ForexCacheUtil {
+final class ForexCacheUtil: Sendable {
     let configuration: ForexKitConfiguration
 
     init(configuration: ForexKitConfiguration) {
@@ -32,7 +32,7 @@ class ForexCacheUtil {
             let cacheKey = Date().hashed
             var foundCachedRates: [Currencies: Double] = [:]
             var remainingSymbols = symbols
-            let cachedExchangeRates = configuration.container.exchangeRates?
+            let cachedExchangeRates = await configuration.container.getExchangeRates()?
                 .find(by: \.key.hashed, is: cacheKey)?
                 .value
             if let cachedExchangeRates {
@@ -56,7 +56,7 @@ class ForexCacheUtil {
                             return result
                         })
                     groupedExchangeRatesByBase[base] = completeExchangeRates
-                    configuration.container.exchangeRates = [cacheKey: groupedExchangeRatesByBase.values.asArray()]
+                    await configuration.container.setExchangeRates([cacheKey: groupedExchangeRatesByBase.values.asArray()])
 
                     return .success(completeExchangeRates)
                 } else {
@@ -97,13 +97,13 @@ class ForexCacheUtil {
                     return result
                 })
             groupedExchangeRatesByBase[base] = completeExchangeRates
-            configuration.container.exchangeRates = [cacheKey: groupedExchangeRatesByBase.values.asArray()]
+            await configuration.container.setExchangeRates([cacheKey: groupedExchangeRatesByBase.values.asArray()])
 
             return .success(completeExchangeRates)
         }
 
-    func getFallback(base: Currencies, symbols: [Currencies]) -> ExchangeRates? {
-        guard let cachedExchangeRates = configuration.container.exchangeRates else { return nil }
+    func getFallback(base: Currencies, symbols: [Currencies]) async -> ExchangeRates? {
+        guard let cachedExchangeRates = await configuration.container.getExchangeRates() else { return nil }
 
         let symbols = symbols
             .filter({ $0 != base })

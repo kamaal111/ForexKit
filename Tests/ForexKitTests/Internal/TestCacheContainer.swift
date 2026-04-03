@@ -8,10 +8,18 @@
 import Foundation
 @testable import ForexKit
 
-class TestCacheContainer: CacheContainerable {
+actor TestCacheContainer: CacheContainerable {
     var exchangeRates: [Date: [ExchangeRates]]?
 
     init(exchangeRates: [Date: [ExchangeRates]]? = nil) {
         self.exchangeRates = exchangeRates
+    }
+
+    func getExchangeRates() -> [Date: [ExchangeRates]]? {
+        exchangeRates
+    }
+
+    func setExchangeRates(_ newValue: [Date: [ExchangeRates]]?) {
+        exchangeRates = newValue
     }
 }

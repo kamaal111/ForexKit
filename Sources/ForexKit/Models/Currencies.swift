@@ -9,7 +9,7 @@ import Foundation
 import KamaalExtensions
 
 /// Enumeration that contains currencies.
-public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable {
+public enum Currencies: String, CaseIterable, Codable, Hashable, Identifiable, Sendable {
     /// Euro
     case EUR
     /// US Dollar

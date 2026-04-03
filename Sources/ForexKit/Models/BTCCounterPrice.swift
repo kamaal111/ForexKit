@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BTCCounterPrice: Codable {
+struct BTCCounterPrice: Codable, Sendable {
     let bpi: [String: BPI]
     let time: Time
 
