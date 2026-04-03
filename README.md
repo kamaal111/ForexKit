@@ -47,7 +47,7 @@ Simply add **ForexKit** to your dependencies in your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/kamaal111/ForexKit.git", .upToNextMajor(from: "3.1.0")),
+    .package(url: "https://github.com/kamaal111/ForexKit.git", .upToNextMajor(from: "5.0.0")),
 ]
 ```
 
